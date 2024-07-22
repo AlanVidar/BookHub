@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="catalogo.css">
+    <link rel="stylesheet" href="menu.css">
+
+    <title>Catálogo de Libros</title>
+    <style>
+        /* Estilos CSS existentes */
+
+        /* Agregamos algunos estilos para los botones */
+
+    </style>
+</head>
+<body>
+    <div class="fondo">
+    <header>
+        <h1>Catálogo de Libros</h1>
+    </header>
+    </div>
+   
+    <nav>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="catalogo.html">Catálogo</a></li>
+            <li><a href="#">Buscar</a></li>
+            <li><a href="#">Mis Libros</a></li>
+            <li><a href="#">Contacto</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <!-- Botones para agregar, modificar y eliminar libros -->
+        <button class="btn" id="add-button">Agregar Libro</button>
+        <button class="btn" id="edit-button">Modificar Libro</button>
+        <button class="btn" id="delete-button">Eliminar Libro</button>
+        <!-- Formulario para agregar/modificar libro -->
+        <form id="book-form">
+            
+            <h2>Agregar/Modificar Libro</h2>
+            <input type="text" id="title" placeholder="Título">
+            <input type="text" id="author" placeholder="Autor">
+            <input type="text" id="año" placeholder="año">
+            <input type="text" id="genero" placeholder="genero">
+            <input type="text" id="editorial" placeholder="editorial">
+            <input type="text" id="descripcion" placeholder="descripcion">
+            <input type="text" id="id_libro" placeholder="id libro">
+            <input type="text" id="cantidad_disponible" placeholder="editorial">
+
+            <button class="btn" id="save-button">Guardar</button>
+            <button class="btn" id="cancel-button">Cancelar</button>
+
+        </form>
+        
+        <br><br><br><br>
+
+        <!-- Campo de búsqueda -->
+        <input type="text" id="search" placeholder="Buscar libros...">
+
+        <ul id="book-list">
+            <!-- Aquí se mostrarán los resultados de búsqueda -->
+        </ul>
+    </div>
+    <script>
+        // Datos de ejemplo para el catálogo de libros (puedes reemplazarlos con tus propios datos)
+        let books = [
+            { id: 1, title: "Libro 1", author: "Autor 1" },
+            { id: 2, title: "Libro 2", author: "Autor 2" },
+            { id: 3, title: "Libro 3", author: "Autor 3" },
+            // Agrega más libros aquí
+        ];
+
+        const searchInput = document.getElementById("search");
+        const bookList = document.getElementById("book-list");
+        const addButton = document.getElementById("add-button");
+        const editButton = document.getElementById("edit-button");
+        const deleteButton = document.getElementById("delete-button");
+        const bookForm = document.getElementById("book-form");
+        const titleInput = document.getElementById("title");
+        const authorInput = document.getElementById("author");
+        const año = document.getElementById("año");
+        const genero = document.getElementById("genero");
+        const editorial = document.getElementById("editorial");
+        const cantidad_disp = document.getElementById("cantidad_disponible");
+        const id_libro = document.getElementById("id_libro");
+        const descripcion = document.getElementById("descripcion");
+        const saveButton = document.getElementById("save-button");
+        const cancelButton = document.getElementById("cancel-button");
+
+        // Función para mostrar los resultados de búsqueda
+        function showResults(query) {
+            const filteredBooks = books.filter(book =>
+                book.title.toLowerCase().includes(query.toLowerCase()) ||
+                book.author.toLowerCase().includes(query.toLowerCase())
+            );
+
+            bookList.innerHTML = "";
+
+            if (filteredBooks.length === 0) {
+                bookList.innerHTML = "<li>No se encontraron resultados.</li>";
+            } else {
+                filteredBooks.forEach(book => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `${book.title} - ${book.author}`;
+                    bookList.appendChild(listItem);
+                });
+            }
+        }
+
+        // Evento de escucha para el campo de búsqueda
+        searchInput.addEventListener("input", function () {
+            showResults(this.value);
+        });
+
+        // Mostrar todos los libros al cargar la página
+        showResults("");
+
+        // Función para abrir el formulario de agregar/modificar libro
+        function openBookForm(isEdit, bookId) {
+            bookForm.style.display = "block";
+            if (isEdit) {
+                // Modo de edición: Rellenar el formulario con los datos del libro seleccionado
+                const bookToEdit = books.find(book => book.id === bookId);
+                if (bookToEdit) {
+                    titleInput.value = bookToEdit.title;
+                    authorInput.value = bookToEdit.author;
+                }
+            } else {
+                // Modo de agregado: Borrar cualquier dato existente en el formulario
+                titleInput.value = "";
+                authorInput.value = "";
+            }
+        }
+
+        // Función para cerrar el formulario de agregar/modificar libro
+        function closeBookForm() {
+            bookForm.style.display = "none";
+            titleInput.value = "";
+            authorInput.value = "";
+        }
+
+        // Evento de escucha para el botón "Agregar Libro"
+        addButton.addEventListener("click", function () {
+            openBookForm(false, null);
+        });
+
+        // Evento de escucha para el botón "Modificar Libro"
+        editButton.addEventListener("click", function () {
+            // Obtener el ID del libro seleccionado (puedes implementar esta parte)
+            const selectedBookId = prompt("Ingresa el ID del libro que deseas modificar:");
+            if (selectedBookId) {
+                openBookForm(true, parseInt(selectedBookId));
+            }
+        });
+
+        // Evento de escucha para el botón "Eliminar Libro"
+        deleteButton.addEventListener("click", function () {
+            // Obtener el ID del libro seleccionado (puedes implementar esta parte)
+            const selectedBookId = prompt("Ingresa el ID del libro que deseas eliminar:");
+            if (selectedBookId) {
+                const indexToDelete = books.findIndex(book => book.id === parseInt(selectedBookId));
+                if (indexToDelete !== -1) {
+                    books.splice(indexToDelete, 1);
+                    showResults(searchInput.value); // Actualizar los resultados de búsqueda
+                }
+            }
+        });
+
+        // Evento de escucha para el botón "Guardar"
+        saveButton.addEventListener("click", function () {
+            const bookTitle = titleInput.value;
+            const bookAuthor = authorInput.value;
+
+            if (bookTitle && bookAuthor) {
+                // Si se proporcionan título y autor, guardar o actualizar el libro
+                const bookId = books.length + 1; // Generar un nuevo ID (puedes ajustar esto según tus necesidades)
+                const newBook = { id: bookId, title: bookTitle, author: bookAuthor };
+
+                // Si estamos en modo de edición, reemplazamos el libro existente
+                const isEditMode = bookForm.style.display === "block";
+                if (isEditMode) {
+                    const editedBookId = parseInt(selectedBookId); // Obtener el ID del libro en modo de edición
+                    const indexToEdit = books.findIndex(book => book.id === editedBookId);
+                    if (indexToEdit !== -1) {
+                        books[indexToEdit] = newBook;
+                    }
+                } else {
+                    // Modo de agregado: Agregar el nuevo libro a la lista de libros
+                    books.push(newBook);
+                }
+
+                closeBookForm();
+                showResults(searchInput.value); // Actualizar los resultados de búsqueda
+            }
+        });
+
+        // Evento de escucha para el botón "Cancelar"
+        cancelButton.addEventListener("click", function () {
+            closeBookForm();
+        });
+    </script>
+</body>
+</html>
